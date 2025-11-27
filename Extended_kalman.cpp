@@ -9,11 +9,11 @@ float H_MAG[18] = { 1,0,0,0,0,0, 0,1,0,0,0,0, 0,0,1,0,0,0 };
 #define PI 3.14159265358979f
 #endif
 
-// ´«¸ÐÆ÷ÊýÁ¿
+// 
 const static char sensors = 1;
 
-/*========================== È«¾Ö±äÁ¿¶¨Òå ==============================*/
-// EKF×´Ì¬±äÁ¿
+/*========================== È«Ö± ==============================*/
+// EKF×´Ì¬
 static float P_mag_ekf_temp[sensors][16], P_EKF[sensors][16], Q_GYR[sensors][16];
 static float Racc_static[sensors][9], Racc_use[sensors][9], Rmag_static[sensors][9], Rmag_use[sensors][9];
 static float k_first[sensors] = { 0 };
@@ -23,7 +23,7 @@ static float MeanACC[sensors][3] = { {0, 0, 0} };
 static float MeanMAG[sensors][3] = { {0, 0, 0} };
 static float MAG_InitialModule[sensors] = { 0 };
 
-// ´ÅÁ¦¼ÆÏà¹Ø×´Ì¬±äÁ¿
+// ×´Ì¬
 static float MAG_Z0[sensors] = { 0 };
 static float MAG_Zm[sensors] = { 0 };
 static float MAG_Fa0[sensors][3] = { {0, 0, 0} };
@@ -35,22 +35,22 @@ static float MAG_OFam[sensors][3] = { {0, 0, 0} };
 static char MAG_LastTrue[sensors] = { 0 };
 static char MAG_Change[sensors] = { 0 };
 
-// ¸Ä½øµÄ´ÅÁ¦¼ÆÈÚºÏÐÂÔö±äÁ¿
-static float MAG_MOm_xy[sensors][2] = { {0, 0} }; // ¼Ù±±×´Ì¬ÏÂµÄË®Æ½·ÖÁ¿»ù×¼
-static float MAG_ReferenceStrength[sensors] = { 0 }; // ´Å³¡Ç¿¶È»ù×¼Öµ
-static float mag_declination_reference[sensors] = { 0 }; // ¶¯Ì¬´ÅÆ«½Ç»ù×¼
-static float MAG_InitialModule_m[sensors] = { 0 }; // ¼Ù±±×´Ì¬ÏÂµÄ´Å³¡Ä£Öµ»ù×¼
+// Ä½Ä´Úº
+static float MAG_MOm_xy[sensors][2] = { {0, 0} }; // Ù±×´Ì¬ÂµË®Æ½×¼
+static float MAG_ReferenceStrength[sensors] = { 0 }; // Å³Ç¿È»×¼Öµ
+static float mag_declination_reference[sensors] = { 0 }; // Ì¬Æ«Ç»×¼
+static float MAG_InitialModule_m[sensors] = { 0 }; // Ù±×´Ì¬ÂµÄ´Å³Ä£Öµ×¼
 
-// ¹Ì¶¨ãÐÖµ²ÎÊý½á¹¹
+// Ì¶Öµá¹¹
 typedef struct {
-    float jiaom;        // ×ËÌ¬½Ç¶È²îãÐÖµ
-    float jiaom_mag;    // ´Å³¡·½Ïò²îãÐÖµ  
-    float bx;           // XÖá·ÖÁ¿²îãÐÖµ
-    float by;           // YÖá·ÖÁ¿²îãÐÖµ
-    float bz;           // ZÖá·ÖÁ¿²îãÐÖµ
-    float module;       // Ä£Öµ²îÒìãÐÖµ
-    float strength;     // ´Å³¡Ç¿¶ÈÆ«²îãÐÖµ
-    int trust_count;    // Á¬Ðø¿ÉÐÅÖ¡ÊýÒªÇó
+    float jiaom;        // Ì¬Ç¶È²Öµ
+    float jiaom_mag;    // Å³Öµ  
+    float bx;           // XÖµ
+    float by;           // YÖµ
+    float bz;           // ZÖµ
+    float module;       // Ä£ÖµÖµ
+    float strength;     // Å³Ç¿Æ«Öµ
+    int trust_count;    // Ö¡Òª
 } FixedThreshold;
 
 static FixedThreshold fixed_threshold[sensors] = {
@@ -59,19 +59,19 @@ static FixedThreshold fixed_threshold[sensors] = {
 
 static int trust_frame_count[sensors] = { 0 };
 static int true_north_condition_count[sensors] = { 0 };
-static char current_state[sensors][16] = { "true_north" }; // µ±Ç°×´Ì¬
-static float learning_rate[sensors] = { 0.01f }; // Ñ§Ï°ÂÊ
-static float declination_threshold[sensors] = { 0.035f }; // ´ÅÆ«½ÇãÐÖµ
-static float strength_threshold[sensors] = { 0.15f }; // ´Å³¡Ç¿¶ÈãÐÖµ
+static char current_state[sensors][16] = { "true_north" }; // Ç°×´Ì¬
+static float learning_rate[sensors] = { 0.01f }; // Ñ§Ï°
+static float declination_threshold[sensors] = { 0.035f }; // Æ«Öµ
+static float strength_threshold[sensors] = { 0.15f }; // Å³Ç¿Öµ
 
-// ACC EKF±äÁ¿
+// ACC EKF
 static float X_ACC_EKF[sensors][3] = { {0, 0, 0} };
 static float P_ACC_EKF[sensors][9] = { {0} };
 static float Q_ACC_EKF[sensors][9] = { {0} };
 static float R_ACC_EKF[sensors][9] = { {0} };
 static float ERR_ACC_EKF[sensors] = { 0 };
 
-// MAG EKF±äÁ¿
+// MAG EKF
 static float X_MAG_EKF[sensors][6] = { {0} };
 static float P_MAG_EKF[sensors][36] = { {0} };
 static float Q_MAG_EKF[sensors][36] = { {0} };
@@ -79,21 +79,21 @@ static float R_MAG_EKF[sensors][9] = { {0} };
 static float A_MAG_EKF[sensors][36] = { {0} };
 static float H_MAG_EKF[sensors][18] = { {0} };
 
-// ¾²Ì¬¼ì²âºÍÔË¶¯¼ì²â
+// Ì¬Ë¶
 static int gyrStatic[sensors] = { 0 };
 static int accStatic[sensors] = { 0 };
 static float accLast[sensors][3] = { {0, 0, 0} };
 static float QuitReturnCtrlNumber[sensors] = { 0 };
 static int QuickRecover[sensors] = { 0 };
 
-// µ¥Î»¾ØÕó
+// Î»
 static float eye3[9] = { 0 };
 static float eye4[16] = { 0 };
 static float eye6[36] = { 0 };
 static float jiaomThresold[sensors] = { 0 };
 static float jiaommagThresold[sensors] = { 0 };
 
-// »·¾³×´Ì¬
+// ×´Ì¬
 static float EnvironmentMagStatus[sensors] = { 0 };
 static float RecoverSignalEKF[sensors] = { 2.1f };
 static char sensorQuitReturnCtrl[sensors] = { 0 };
@@ -103,7 +103,7 @@ static bool sensorQuitTimeReturnCtrl[sensors] = { false };
 static int MagModelStatus = 1;
 static int SpecialModelStatus = 1;
 
-// Ê±¼ä±äÁ¿
+// Ê±
 static float t_a[sensors] = { 0 };
 static float t_m[sensors] = { 0 };
 static float t_quit[sensors] = { 0 };
@@ -112,16 +112,16 @@ static float quat_Filter[sensors][4] = { {0} };
 static int gyr_vec_flag[sensors] = { 0 };
 static int count[sensors] = { 0 };
 
-/*========================== ¹¤¾ßº¯ÊýÊµÏÖ ==============================*/
+/*========================== ßºÊµ ==============================*/
 
-// ÏÞÖÆº¯Êý
+// Æº
 static float clamp(float val, float min_val, float max_val) {
     if (val < min_val) return min_val;
     if (val > max_val) return max_val;
     return val;
 }
 
-// ¾ØÕó×ªÖÃ
+// ×ª
 static void matrix_trans(float* mata, char r, char c, float* matb) {
     char i, j;
     for (i = 0; i < r; i++) {
@@ -131,7 +131,7 @@ static void matrix_trans(float* mata, char r, char c, float* matb) {
     }
 }
 
-// ¾ØÕó¼Ó·¨
+// Ó·
 static void matrix_add(float* mata, float* matb, char r, char c, float* matc) {
     char i, j;
     for (i = 0; i < r; i++) {
@@ -141,7 +141,7 @@ static void matrix_add(float* mata, float* matb, char r, char c, float* matc) {
     }
 }
 
-// ¾ØÕó¼õ·¨
+// 
 static void matrix_sub(float* mata, float* matb, char r, char c, float* matc) {
     char i, j;
     for (i = 0; i < r; i++) {
@@ -151,7 +151,7 @@ static void matrix_sub(float* mata, float* matb, char r, char c, float* matc) {
     }
 }
 
-// ¾ØÕó³Ë·¨
+// Ë·
 static void matrix_mul(float* mat1, char row1, char columns1, float* mat2, char columns2, float* mat) {
     char i, j, k;
     for (i = 0; i < row1; i++) {
@@ -164,7 +164,7 @@ static void matrix_mul(float* mat1, char row1, char columns1, float* mat2, char 
     }
 }
 
-// 4x4¾ØÕó³Ë·¨
+// 4x4Ë·
 static void matrix_4_mul(float* mat1, float* mat2, float* mat) {
     char i, j, k;
     for (i = 0; i < 4; i++) {
@@ -177,14 +177,14 @@ static void matrix_4_mul(float* mat1, float* mat2, float* mat) {
     }
 }
 
-// 3x3¾ØÕóÇóÄæ
+// 3x3
 static void matrix_3_inv(float* mata, float* mata_inv) {
     float mata_det;
     mata_det = mata[0] * mata[4] * mata[8] + mata[1] * mata[5] * mata[6] + mata[2] * mata[3] * mata[7]
         - mata[2] * mata[4] * mata[6] - mata[5] * mata[7] * mata[0] - mata[8] * mata[1] * mata[3];
 
     if (fabsf(mata_det) < 1e-10f) {
-        // ÐÐÁÐÊ½½Ó½ü0£¬·µ»Øµ¥Î»¾ØÕó
+        // Ê½Ó½0ØµÎ»
         mata_inv[0] = 1.0f; mata_inv[1] = 0.0f; mata_inv[2] = 0.0f;
         mata_inv[3] = 0.0f; mata_inv[4] = 1.0f; mata_inv[5] = 0.0f;
         mata_inv[6] = 0.0f; mata_inv[7] = 0.0f; mata_inv[8] = 1.0f;
@@ -202,7 +202,7 @@ static void matrix_3_inv(float* mata, float* mata_inv) {
     mata_inv[8] = (mata[0] * mata[4] - mata[1] * mata[3]) / mata_det;
 }
 
-// ËÄÔªÊý×ª·½ÏòÓàÏÒ¾ØÕó
+// Ôª×ªÒ¾
 static void matrix_Cbn(float* quat, float* Cbn) {
     Cbn[0] = quat[0] * quat[0] + quat[1] * quat[1] - quat[2] * quat[2] - quat[3] * quat[3];
     Cbn[1] = 2 * (quat[1] * quat[2] - quat[0] * quat[3]);
@@ -215,7 +215,7 @@ static void matrix_Cbn(float* quat, float* Cbn) {
     Cbn[8] = quat[0] * quat[0] - quat[1] * quat[1] - quat[2] * quat[2] + quat[3] * quat[3];
 }
 
-// Æ½·½ºÍ
+// Æ½
 static float SquaresSum(float* vec, unsigned int len) {
     float q_len = 0;
     for (unsigned int i = 0; i < len; i++) {
@@ -229,7 +229,7 @@ static float Module(float* vec, unsigned int len) {
     return sqrtf(SquaresSum(vec, len));
 }
 
-// ¹éÒ»»¯
+// Ò»
 static char Norm(float* vec, unsigned int len) {
     float q_len = Module(vec, len);
     if (q_len < 1e-10f) {
@@ -241,7 +241,7 @@ static char Norm(float* vec, unsigned int len) {
     return 1;
 }
 
-// °²È«·´ÓàÏÒ
+// È«
 static float ACos(float value) {
     if (value >= 1.0f) return 0.0f;
     else if (value <= -1.0f) return PI;
@@ -250,7 +250,7 @@ static float ACos(float value) {
     }
 }
 
-// Êý×é¸´ÖÆ
+// é¸´
 static char Copy(float* out, float* in, unsigned int len) {
     for (unsigned int i = 0; i < len; i++) {
         out[i] = in[i];
@@ -258,36 +258,36 @@ static char Copy(float* out, float* in, unsigned int len) {
     return 1;
 }
 
-/*========================== ¸Ä½øµÄ´ÅÁ¦¼ÆÈÚºÏº¯Êý ==============================*/
+/*========================== Ä½Ä´ÚºÏº ==============================*/
 
-// ¼ÆËã´ÅÆ«½Ç
+// Æ«
 static float calculate_mag_declination(char sensor, float* acc_T, float* m_n) {
-    (void)acc_T; // Î´Ê¹ÓÃ²ÎÊý
-    (void)sensor; // Î´Ê¹ÓÃ²ÎÊý
+    (void)acc_T; // Î´Ê¹Ã²
+    (void)sensor; // Î´Ê¹Ã²
 
-    // µØÀí±±ÏòÔÚË®Æ½ÃæÉÏµÄÍ¶Ó°
+    // Ë®Æ½ÏµÍ¶Ó°
     float north_vec[2] = { 1.0f, 0.0f };
 
-    // ´Å³¡ÏòÁ¿ÔÚË®Æ½ÃæÉÏµÄÍ¶Ó°
+    // Å³Ë®Æ½ÏµÍ¶Ó°
     float mag_horizontal[2] = { m_n[0], m_n[1] };
     float mag_horizontal_norm = sqrtf(mag_horizontal[0] * mag_horizontal[0] +
         mag_horizontal[1] * mag_horizontal[1]);
 
     if (mag_horizontal_norm < 1e-6f) {
-        return PI; // ´Å³¡Ë®Æ½·ÖÁ¿Îª0Ê±£¬Ä¬ÈÏ´ÅÆ«½Ç³¬ãÐÖµ
+        return PI; // Å³Ë®Æ½Îª0Ê±Ä¬Ï´Æ«Ç³Öµ
     }
 
-    // ¹éÒ»»¯´Å³¡Ë®Æ½·ÖÁ¿
+    // Ò»Å³Ë®Æ½
     mag_horizontal[0] /= mag_horizontal_norm;
     mag_horizontal[1] /= mag_horizontal_norm;
 
-    // ¼ÆËã´ÅÆ«½Ç
+    // Æ«
     float dot_product = north_vec[0] * mag_horizontal[0] + north_vec[1] * mag_horizontal[1];
     float cross_product = north_vec[0] * mag_horizontal[1] - north_vec[1] * mag_horizontal[0];
 
     float mag_declination = acosf(clamp(dot_product, -1.0f, 1.0f));
 
-    // ÐÞÕý½Ç¶È·½Ïò
+    // Ç¶È·
     if (cross_product < 0) {
         mag_declination = -mag_declination;
     }
@@ -295,7 +295,7 @@ static float calculate_mag_declination(char sensor, float* acc_T, float* m_n) {
     return mag_declination;
 }
 
-// ¼ÆËã´Å³¡Ç¿¶ÈÆ«²î
+// Å³Ç¿Æ«
 static float calculate_mag_strength_bias(char sensor, float current_strength) {
     if (MAG_ReferenceStrength[sensor] < 1e-6f) {
         return 1.0f;
@@ -306,7 +306,7 @@ static float calculate_mag_strength_bias(char sensor, float current_strength) {
     return fminf(relative_bias, 1.0f);
 }
 
-// ¹Ì¶¨ãÐÖµ¿ÉÐÅ¶ÈÅÐ¶Ï
+// Ì¶ÖµÅ¶Ð¶
 static char fixed_threshold_check(char sensor, float jiaom, float jiaom_mag,
     float bx_diff, float by_diff, float bz_diff,
     float module_diff, float strength_bias) {
@@ -365,7 +365,7 @@ static char fixed_threshold_check(char sensor, float jiaom, float jiaom_mag,
     }
 
     char key_conditions_ok = 1;
-    // ¹Ø¼üÌõ¼þ¼ì²é
+    // Ø¼
     if (!isnan(bx_diff) && bx_diff > thresh->bx) {
         key_conditions_ok = 0;
     }
@@ -392,12 +392,12 @@ static char fixed_threshold_check(char sensor, float jiaom, float jiaom_mag,
     return trust_flag;
 }
 
-// Õæ±±->¼Ù±±ÇÐ»»¼ì²â
+// æ±±->Ù±Ð»
 static char check_switch_to_fake_north(char sensor, float jiao0_2, float jiao_mag_2,
     float bz2, float mag0_ss) {
     char switch_to_fake_north = 0;
 
-    // Èç¹ûµ±Ç°ÊÇÕæ±±×´Ì¬µ«Ìõ¼þ²»ÔÙÂú×ã£¬¿¼ÂÇÇÐ»»µ½¼Ù±±
+    // Ç°æ±±×´Ì¬ã£¬Ð»Ù±
     if (strcmp(current_state[sensor], "true_north") == 0) {
         char true_north_conditions[2] = {
             (jiao0_2 < 0.15f) && (jiao_mag_2 < 0.08f) &&
@@ -408,7 +408,7 @@ static char check_switch_to_fake_north(char sensor, float jiao0_2, float jiao_ma
             (fabsf(mag0_ss - MAG_InitialModule[sensor]) < 0.05f)
         };
 
-        // Èç¹ûËùÓÐÕæ±±Ìõ¼þ¶¼²»Âú×ã
+        // æ±±
         if (!true_north_conditions[0] && !true_north_conditions[1]) {
             switch_to_fake_north = 1;
         }
@@ -417,12 +417,12 @@ static char check_switch_to_fake_north(char sensor, float jiao0_2, float jiao_ma
     return switch_to_fake_north;
 }
 
-// ¼Ù±±->Õæ±±ÇÐ»»¼ì²â  
+// Ù±->æ±±Ð»  
 static char check_switch_to_true_north(char sensor, float jiao0_2, float jiao_mag_2,
     float bz2, float mag0_ss, int MagModelStatus) {
     char switch_to_true_north = 0;
 
-    // Èç¹ûµ±Ç°ÊÇ¼Ù±±×´Ì¬µ«Õæ±±Ìõ¼þÖØÐÂÂú×ã
+    // Ç°Ç¼Ù±×´Ì¬æ±±
     if (strcmp(current_state[sensor], "fake_north") == 0) {
         char true_north_conditions =
             (((jiao0_2 < 0.18f) && (jiao_mag_2 < 0.15f) &&
@@ -432,7 +432,7 @@ static char check_switch_to_true_north(char sensor, float jiao0_2, float jiao_ma
                     (fabsf(mag0_ss - MAG_InitialModule[sensor]) < 0.05f))) &&
             (mag0_ss < 0.5f) && (mag0_ss > 0.15f) && MagModelStatus == 1;
 
-        // ¶îÍâÒªÇó£ºÁ¬Ðø¶àÖ¡Âú×ãÕæ±±Ìõ¼þ
+        // ÒªÖ¡æ±±
         if (true_north_conditions) {
             true_north_condition_count[sensor]++;
             if (true_north_condition_count[sensor] >= fixed_threshold[sensor].trust_count) {
@@ -448,7 +448,7 @@ static char check_switch_to_true_north(char sensor, float jiao0_2, float jiao_ma
     return switch_to_true_north;
 }
 
-/*========================== EKF³õÊ¼»¯º¯Êý ==============================*/
+/*========================== EKFÊ¼ ==============================*/
 
 static void ACCEKF_init(char sensor) {
     for (int i = 0; i < 9; i++) {
@@ -521,14 +521,14 @@ static void ekf_init(char sensor) {
     MAGEKF_init(sensor);
     EYE_init();
 
-    // ³õÊ¼»¯ãÐÖµ
+    // Ê¼Öµ
     jiaomThresold[sensor] = 0.15f;
     jiaommagThresold[sensor] = 0.08f;
 }
 
-/*========================== ËÄÔªÊýÔËËãº¯Êý ==============================*/
+/*========================== Ôªãº¯ ==============================*/
 
-// ËÄÔªÊý¾ØÕó
+// Ôª
 static void w_matrix(float* quat, float* q_matrix, int mode, int matT) {
     if (mode == 1) {
         if (matT == 1) {
@@ -560,7 +560,7 @@ static void w_matrix(float* quat, float* q_matrix, int mode, int matT) {
     }
 }
 
-/*========================== Íâ²¿½Ó¿Úº¯Êý ==============================*/
+/*========================== â²¿Ó¿Úº ==============================*/
 
 void EKF_EnableSensorQuitReturn(void) {
     for (char i = 0; i < sensors; i++) {
@@ -602,7 +602,7 @@ void EKF_ChangeSpecialModel(int modelsign) {
     }
 }
 
-/*========================== Ö÷KalmanÂË²¨º¯Êý ==============================*/
+/*========================== KalmanË² ==============================*/
 
 uint8_t KalmanFilter(float* acc_mcu, float* gyr_mcu, float* mag_mcu, float dtTime, float* q_out) {
     char sensor = 0;
@@ -620,13 +620,13 @@ uint8_t KalmanFilter(float* acc_mcu, float* gyr_mcu, float* mag_mcu, float dtTim
     float Cbn[9], m_n[3], m_n2[3];
     char acc_update = 0;
 
-    // ÐÂÔö±äÁ¿ÉùÃ÷
+    // 
     float jiao0_2, jiao_mag_2, jiao0, jiao_mag;
 
     if (dtTime <= 0.0f || dtTime > 0.005f)
     {
         dtTime = 0.005f;
-        // £¨¿ÉÑ¡£©¿ÉÒÔÔÚÕâÀï¼ÓÈëµ÷ÊÔÐÅÏ¢£¬ÌáÊ¾ dtTime Òì³£
+        // Ñ¡Ï¢Ê¾ dtTime ì³£
         // printf("Warning: Abnormal dtTime, reset to default: %f\n", DT_DEFAULT);
     }
 
@@ -655,7 +655,7 @@ uint8_t KalmanFilter(float* acc_mcu, float* gyr_mcu, float* mag_mcu, float dtTim
         mag[2] = mag[2] / mag0_ss;
     }
 
-    // ³õÊ¼»¯½×¶Î
+    // Ê¼×¶
     if (k_first[sensor] <= 0.1f) {
         if ((acc[0] == 0 && acc[1] == 0 && acc[2] == 0) || (mag[0] == 0 && mag[1] == 0 && mag[2] == 0)) {
             return 0;
@@ -671,6 +671,14 @@ uint8_t KalmanFilter(float* acc_mcu, float* gyr_mcu, float* mag_mcu, float dtTim
             MeanACC[sensor][0] = 0; MeanACC[sensor][1] = 0; MeanACC[sensor][2] = 0;
             MeanMAG[sensor][0] = 0; MeanMAG[sensor][1] = 0; MeanMAG[sensor][2] = 0;
             MAG_InitialModule[sensor] = 0;
+            MAG_ReferenceStrength[sensor] = 0;
+            mag_declination_reference[sensor] = 0;
+            MAG_MOm_xy[sensor][0] = 0;
+            MAG_MOm_xy[sensor][1] = 0;
+            MAG_InitialModule_m[sensor] = 0;
+            true_north_condition_count[sensor] = 0;
+            trust_frame_count[sensor] = 0;
+            strcpy(current_state[sensor], "true_north");
         }
 
         ekf_init(sensor);
@@ -719,6 +727,13 @@ uint8_t KalmanFilter(float* acc_mcu, float* gyr_mcu, float* mag_mcu, float dtTim
         MAG_Z0[sensor] = bz;
         MAG_LastTrue[sensor] = 1;
 
+        MAG_InitialModule_m[sensor] = MAG_InitialModule[sensor];
+        MAG_ReferenceStrength[sensor] = MAG_InitialModule[sensor];
+        MAG_MOm_xy[sensor][0] = m_n[0];
+        MAG_MOm_xy[sensor][1] = m_n[1];
+        true_north_condition_count[sensor] = 5;
+        strcpy(current_state[sensor], "true_north");
+
         Copy(quat_Filter[sensor], quat_EKF[sensor], 4);
         Copy(q_out, quat_EKF[sensor], 4);
 
@@ -735,9 +750,9 @@ uint8_t KalmanFilter(float* acc_mcu, float* gyr_mcu, float* mag_mcu, float dtTim
         return 1;
     }
 
-    // ÍÓÂÝÒÇ»ý·ÖÔ¤²â
+    // Ç»Ô¤
     if (gyrErr > 0.05f && dtTime < 0.01f) {
-        // ACC EKFÔ¤²â
+        // ACC EKFÔ¤
         A_ACC[0] = 1; A_ACC[1] = -gyr[2] * dtTime; A_ACC[2] = gyr[1] * dtTime;
         A_ACC[3] = gyr[2] * dtTime; A_ACC[4] = 1; A_ACC[5] = -gyr[0] * dtTime;
         A_ACC[6] = -gyr[1] * dtTime; A_ACC[7] = gyr[0] * dtTime; A_ACC[8] = 1;
@@ -750,7 +765,7 @@ uint8_t KalmanFilter(float* acc_mcu, float* gyr_mcu, float* mag_mcu, float dtTim
         matrix_mul(mid2, 3, 3, A_ACC, 3, mid3);
         matrix_add(mid3, Q_ACC_EKF[sensor], 3, 3, P_ACC_EKF[sensor]);
 
-        // MAG EKFÔ¤²â
+        // MAG EKFÔ¤
         gyr_vec_flag[sensor] = 0;
         A_MAG_EKF[sensor][0] = A_ACC[0];
         A_MAG_EKF[sensor][1] = A_ACC[1];
@@ -770,7 +785,7 @@ uint8_t KalmanFilter(float* acc_mcu, float* gyr_mcu, float* mag_mcu, float dtTim
         matrix_mul(mid2, 6, 6, A_MAG_EKF[sensor], 6, mid3);
         matrix_add(mid3, Q_MAG_EKF[sensor], 6, 6, P_MAG_EKF[sensor]);
 
-        // ËÄÔªÊýÔ¤²â
+        // ÔªÔ¤
         A[0] = 1; A[1] = -0.5f * gyr[0] * dtTime; A[2] = -0.5f * gyr[1] * dtTime; A[3] = -0.5f * gyr[2] * dtTime;
         A[4] = 0.5f * gyr[0] * dtTime; A[5] = 1; A[6] = 0.5f * gyr[2] * dtTime; A[7] = -0.5f * gyr[1] * dtTime;
         A[8] = 0.5f * gyr[1] * dtTime; A[9] = -0.5f * gyr[2] * dtTime; A[10] = 1; A[11] = 0.5f * gyr[0] * dtTime;
@@ -789,7 +804,7 @@ uint8_t KalmanFilter(float* acc_mcu, float* gyr_mcu, float* mag_mcu, float dtTim
         matrix_4_mul(mid1, mid2, mid3);
         matrix_add(mid3, Q_GYR[sensor], 4, 4, P_EKF[sensor]);
 
-        // ÏÞÖÆÐ­·½²î¾ØÕó
+        // Ð­
         float_temp = 100.0f;
         for (char i = 0; i < 16; i++) {
             if (P_EKF[sensor][i] > float_temp) {
@@ -801,7 +816,7 @@ uint8_t KalmanFilter(float* acc_mcu, float* gyr_mcu, float* mag_mcu, float dtTim
         }
     }
 
-    // ¼ÓËÙ¶È¼Æ¸üÐÂ
+    // Ù¶È¼Æ¸
     t_a[sensor] = t_a[sensor] + dtTime;
     float maxErr;
     float K_ACC[9];
@@ -811,7 +826,7 @@ uint8_t KalmanFilter(float* acc_mcu, float* gyr_mcu, float* mag_mcu, float dtTim
         acc_update = 1;
         Copy(accLast[sensor], acc_mcu, 3);
 
-        // ACC EKF¸üÐÂ
+        // ACC EKF
         if (accErr < 2.0f) {
             float_temp = gyrErr * accErr + 1e-4f;
             maxErr = fmaxf(float_temp, ERR_ACC_EKF[sensor]);
@@ -842,7 +857,7 @@ uint8_t KalmanFilter(float* acc_mcu, float* gyr_mcu, float* mag_mcu, float dtTim
         Norm(acc_EKF, 3);
     }
 
-    // ¼ÆËã¼ÓËÙ¶ÈÎó²î
+    // Ù¶
     acc_T[0] = 2 * (quat_EKF[sensor][1] * quat_EKF[sensor][3] - quat_EKF[sensor][0] * quat_EKF[sensor][2]);
     acc_T[1] = 2 * (quat_EKF[sensor][2] * quat_EKF[sensor][3] + quat_EKF[sensor][0] * quat_EKF[sensor][1]);
     acc_T[2] = quat_EKF[sensor][0] * quat_EKF[sensor][0] - quat_EKF[sensor][1] * quat_EKF[sensor][1] - quat_EKF[sensor][2] * quat_EKF[sensor][2] + quat_EKF[sensor][3] * quat_EKF[sensor][3];
@@ -854,7 +869,7 @@ uint8_t KalmanFilter(float* acc_mcu, float* gyr_mcu, float* mag_mcu, float dtTim
         jiao_acc = 100.0f;
     }
 
-    // ¿ìËÙ»Ø¹é¼ì²â
+    // Ù»Ø¹
     if ((acc_update == 1) || (sensorQuitReturnCtrl[sensor] == 1)) {
         if (accErr > 10.0f && gyrErr > 10.0f) {
             QuitReturnCtrlNumber[sensor] += 0.1f;
@@ -922,7 +937,7 @@ uint8_t KalmanFilter(float* acc_mcu, float* gyr_mcu, float* mag_mcu, float dtTim
             mid1[1] = acc_EKF[1] - acc_T[1];
             mid1[2] = acc_EKF[2] - acc_T[2];
             dist_ACC1 = mid1[0] * mid1[0] + mid1[1] * mid1[1] + mid1[2] * mid1[2];
-            float_temp = sqrtf(mid1[0] * mid1[0] + mid1[1] * mid1[1] + mid1[2] * mid1[2]);//ÐÞ¸´Á¦¶È¹ØÏµ float_temp=2Rsin(Q_GYR/2),1¶ÔÓ¦Ã¿Ö¡5.8¶ÈµÄÐÞ¸´Á¦
+            float_temp = sqrtf(mid1[0] * mid1[0] + mid1[1] * mid1[1] + mid1[2] * mid1[2]);//Þ¸È¹Ïµ float_temp=2Rsin(Q_GYR/2),1Ó¦Ã¿Ö¡5.8ÈµÞ¸
             Ryu = 0.08;
             if (float_temp > Ryu) {
                 mid1[0] = mid1[0] * Ryu / float_temp;
@@ -971,14 +986,14 @@ uint8_t KalmanFilter(float* acc_mcu, float* gyr_mcu, float* mag_mcu, float dtTim
         }
     }
 
-    // ========== ¸Ä½øµÄ´ÅÁ¦¼ÆÈÚºÏ²¿·Ö ==========
+    // ========== Ä½Ä´ÚºÏ² ==========
     t_m[sensor] = t_m[sensor] + dtTime;
     int flagg = 1;
     if (MagModelStatus == 2) { flagg = 0; }
 
     if (t_m[sensor] > 0.03f && flagg) {
         if (gyrErr > 0.05f) {
-            // ¼ÆËã´Å³¡ÔÚµ¼º½ÏµµÄÍ¶Ó°
+            // Å³ÚµÏµÍ¶Ó°
             matrix_Cbn(quat_EKF[sensor], Cbn);
             matrix_mul(Cbn, 3, 3, mag, 1, m_n2);
             float bx2 = sqrtf(m_n2[0] * m_n2[0] + m_n2[1] * m_n2[1]);
@@ -993,7 +1008,7 @@ uint8_t KalmanFilter(float* acc_mcu, float* gyr_mcu, float* mag_mcu, float dtTim
             k_m = 1.0f;
             t_m[sensor] = t_m[sensor] - 0.03f;
 
-            // MAG EKF¸üÐÂ - ÓëMATLAB´úÂë±£³ÖÒ»ÖÂ
+            // MAG EKF - MATLABë±£Ò»
             gyr_vec_flag[sensor] += 1;
             if (gyr_vec_flag[sensor] <= 2) {
                 Rmag_use[sensor][0] = k_m * R_MAG_EKF[sensor][0];
@@ -1044,7 +1059,7 @@ uint8_t KalmanFilter(float* acc_mcu, float* gyr_mcu, float* mag_mcu, float dtTim
             mag0_ss_EKF = sqrtf(mag0_s_EKF);
             Norm(mag_EKF, 3);
 
-            // ¼ÆËãEKFÂË²¨ºóµÄ´Å³¡ÔÚµ¼º½ÏµµÄÍ¶Ó°
+            // EKFË²Ä´Å³ÚµÏµÍ¶Ó°
             matrix_mul(Cbn, 3, 3, mag_EKF, 1, m_n);
             bx = sqrtf(m_n[0] * m_n[0] + m_n[1] * m_n[1]);
             bz = m_n[2];
@@ -1057,15 +1072,15 @@ uint8_t KalmanFilter(float* acc_mcu, float* gyr_mcu, float* mag_mcu, float dtTim
             char FixMAG = 0;
             char local_trust_flag = 0;
 
-            // »·¾³×´Ì¬ÅÐ¶Ï
+            // ×´Ì¬Ð¶
             if ((mag0_ss < 0.50f) && (mag0_ss > 0.15f)) {
-                EnvironmentMagStatus[sensor] = 0; // °²È«
+                EnvironmentMagStatus[sensor] = 0; // È«
             }
             else {
-                EnvironmentMagStatus[sensor] = -2.1f; // ´Å³¡Òì³£
+                EnvironmentMagStatus[sensor] = -2.1f; // Å³ì³£
             }
 
-            // ×´Ì¬ÇÐ»»¼ì²â
+            // ×´Ì¬Ð»
             char switch_to_fake_north_flag = check_switch_to_fake_north(sensor, jiao0_2, jiao_mag_2, bz2, mag0_ss);
             char switch_to_true_north_flag = check_switch_to_true_north(sensor, jiao0_2, jiao_mag_2, bz2, mag0_ss, MagModelStatus);
 
@@ -1104,14 +1119,14 @@ uint8_t KalmanFilter(float* acc_mcu, float* gyr_mcu, float* mag_mcu, float dtTim
                 MAG_InitialModule_m[sensor] = mag0_ss_EKF;
             }
 
-            // ¸ù¾Ýµ±Ç°×´Ì¬½øÐÐ´¦Àí
+            // ÝµÇ°×´Ì¬Ð´
             if (strcmp(current_state[sensor], "true_north") == 0) {
                 FixMAG = 1;
                 float MAG_MO[3];
                 Copy(MAG_MO, MAG_MO0[sensor], 3);
                 k_m = 1.0f + 50.0f * fabsf(mag0_s - MAG_InitialModule[sensor] * MAG_InitialModule[sensor]);
 
-                // Õæ±±×´Ì¬ÏÂ¸üÐÂ»ù×¼
+                // æ±±×´Ì¬Â¸Â»×¼
                 MAG_ReferenceStrength[sensor] = 0.98f * MAG_ReferenceStrength[sensor] + 0.02f * mag0_ss_EKF;
                 float mag_declination = calculate_mag_declination(sensor, acc_T, m_n);
                 if (!isnan(mag_declination) && !isinf(mag_declination)) {
@@ -1120,7 +1135,7 @@ uint8_t KalmanFilter(float* acc_mcu, float* gyr_mcu, float* mag_mcu, float dtTim
 
             }
             else if (strcmp(current_state[sensor], "fake_north") == 0) {
-                // ¼ÆËã¸÷ÖÖ²îÒì
+                // Ö²
                 jiaom = ACos(Fam[0] * MAG_Fam[sensor][0] + Fam[2] * MAG_Fam[sensor][2]);
                 float denom = Fam[0] * sqrtf(MAG_MOm[sensor][0] * MAG_MOm[sensor][0] + MAG_MOm[sensor][1] * MAG_MOm[sensor][1]) + 1e-6f;
                 jiaom_mag = ACos((m_n[0] * MAG_MOm[sensor][0] + m_n[1] * MAG_MOm[sensor][1]) / denom);
@@ -1133,10 +1148,10 @@ uint8_t KalmanFilter(float* acc_mcu, float* gyr_mcu, float* mag_mcu, float dtTim
                 float mag_declination = calculate_mag_declination(sensor, acc_T, m_n);
                 float declination_abs = fabsf(mag_declination - mag_declination_reference[sensor]);
 
-                // Ê¹ÓÃ¹Ì¶¨ãÐÖµÅÐ¶Ïµ±Ç°Ö¡ÊÇ·ñ¿ÉÐÅ
+                // Ê¹Ã¹Ì¶ÖµÐ¶ÏµÇ°Ö¡Ç·
                 local_trust_flag = fixed_threshold_check(sensor, jiaom, jiaom_mag, bx_diff, by_diff, bz_diff, module_diff, strength_bias);
 
-                // Ë«Ìõ¼þÅÐ¶Ï - ÓëMATLAB´úÂëÍêÈ«Ò»ÖÂ
+                // Ë«Ð¶ - MATLABÈ«Ò»
                 if ((declination_abs <= declination_threshold[sensor] && strength_bias <= strength_threshold[sensor]) ||
                     (local_trust_flag && trust_frame_count[sensor] >= fixed_threshold[sensor].trust_count)) {
 
@@ -1145,13 +1160,13 @@ uint8_t KalmanFilter(float* acc_mcu, float* gyr_mcu, float* mag_mcu, float dtTim
                     Copy(MAG_MO, MAG_MOm[sensor], 3);
                     k_m = 1.0f + 50.0f * fabsf(mag0_s_EKF - MAG_InitialModule_m[sensor] * MAG_InitialModule_m[sensor]);
 
-                    // ÎÈ¶¨¼Ù±±×´Ì¬ÏÂ»ºÂý¸üÐÂ»ù×¼
+                    // È¶Ù±×´Ì¬Â»Â»×¼
                     MAG_ReferenceStrength[sensor] = (1.0f - learning_rate[sensor]) * MAG_ReferenceStrength[sensor] + learning_rate[sensor] * mag0_ss_EKF;
                     if (!isnan(mag_declination) && !isinf(mag_declination)) {
                         mag_declination_reference[sensor] = (1.0f - learning_rate[sensor]) * mag_declination_reference[sensor] + learning_rate[sensor] * mag_declination;
                     }
 
-                    // Æ½»¬¸üÐÂ¼Ù±±»ù×¼
+                    // Æ½Â¼Ù±×¼
                     float smooth_factor = 0.0015f;
                     for (int i = 0; i < 3; i++) {
                         MAG_MOm[sensor][i] = (1.0f - smooth_factor) * MAG_MOm[sensor][i] + smooth_factor * m_n[i];
@@ -1171,7 +1186,7 @@ uint8_t KalmanFilter(float* acc_mcu, float* gyr_mcu, float* mag_mcu, float dtTim
                     MAG_InitialModule_m[sensor] = (1.0f - smooth_factor) * MAG_InitialModule_m[sensor] + smooth_factor * mag0_ss_EKF;
                 }
                 else {
-                    // ²»¿ÉÐÅ£¬ÖØÖÃ¼Ù±±Ïà¹Ø×´Ì¬
+                    // Å£Ã¼Ù±×´Ì¬
                     Copy(MAG_MOm[sensor], m_n, 3);
                     Copy(MAG_Fam[sensor], Fam, 3);
                     Copy(MAG_OMOm[sensor], m_n2, 3);
@@ -1197,7 +1212,7 @@ uint8_t KalmanFilter(float* acc_mcu, float* gyr_mcu, float* mag_mcu, float dtTim
                 }
             }
 
-            // ´ÅÁ¦¼ÆÐÞÕý
+            // 
             if (FixMAG == 1 && (MagModelStatus == 1 || MagModelStatus == 2)) {
                 float MAG_MO[3];
                 if (strcmp(current_state[sensor], "true_north") == 0) {
@@ -1211,7 +1226,7 @@ uint8_t KalmanFilter(float* acc_mcu, float* gyr_mcu, float* mag_mcu, float dtTim
                 Rmag_use[sensor][4] = k_m * Rmag_static[sensor][4];
                 Rmag_use[sensor][8] = k_m * Rmag_static[sensor][8];
 
-                // H2¾ØÕó¼ÆËã - ÓëMATLAB´úÂëÒ»ÖÂ
+                // H2 - MATLABÒ»
                 H2[0] = 2 * (MAG_MO[0] * quat_EKF[sensor][0] + MAG_MO[1] * quat_EKF[sensor][3] - MAG_MO[2] * quat_EKF[sensor][2]);
                 H2[1] = 2 * (MAG_MO[0] * quat_EKF[sensor][1] + MAG_MO[1] * quat_EKF[sensor][2] + MAG_MO[2] * quat_EKF[sensor][3]);
                 H2[2] = 2 * (-MAG_MO[0] * quat_EKF[sensor][2] + MAG_MO[1] * quat_EKF[sensor][1] - MAG_MO[2] * quat_EKF[sensor][0]);
@@ -1244,7 +1259,7 @@ uint8_t KalmanFilter(float* acc_mcu, float* gyr_mcu, float* mag_mcu, float dtTim
 
                 // mid1=self.MAG_MO*T_SY(self.quat_EKF)
                 float mid8[3];
-                matrix_mul(MAG_MO, 1, 3, Cbn, 3, mid8); // Ïàµ±ÓÚMATLABÖÐµÄ T_SY
+                matrix_mul(MAG_MO, 1, 3, Cbn, 3, mid8); // àµ±MATLABÐµ T_SY
 
                 // mid2=self.mag_EKF-mid1
                 float mid9[3] = {
@@ -1253,7 +1268,7 @@ uint8_t KalmanFilter(float* acc_mcu, float* gyr_mcu, float* mag_mcu, float dtTim
                     mag_EKF[2] - mid8[2]
                 };
 
-                // MAG½âñîËã·¨ - ÓëMATLAB´úÂëÍêÈ«Ò»ÖÂ
+                // MAGã·¨ - MATLABÈ«Ò»
                 // q_temp=self.quat_EKF+mid2*K2'
                 float mid10[4];
                 matrix_mul(K2, 4, 3, mid9, 1, mid10);
@@ -1264,15 +1279,15 @@ uint8_t KalmanFilter(float* acc_mcu, float* gyr_mcu, float* mag_mcu, float dtTim
 
                 // mid = w_matrix(self.quat_EKF,1)
                 float mid11[16];
-                w_matrix(quat_EKF[sensor], mid11, 1, 0); // mode=1, matT=0 ¶ÔÓ¦MATLABµÄw_matrix(quat,1)
+                w_matrix(quat_EKF[sensor], mid11, 1, 0); // mode=1, matT=0 Ó¦MATLABw_matrix(quat,1)
 
                 // q_temp2 = q_temp*mid
                 matrix_mul(q_temp, 1, 4, mid11, 4, q_temp2);
-                q_temp2[1] = 0; q_temp2[2] = 0; // ½âñî£ºÖ»±£ÁôxºÍw·ÖÁ¿
+                q_temp2[1] = 0; q_temp2[2] = 0; // î£ºÖ»xw
                 Norm(q_temp2, 4);
 
                 // self.quat_EKF=q_temp2*mid'
-                w_matrix(quat_EKF[sensor], mid11, 1, 1); // mode=1, matT=1 ¶ÔÓ¦×ªÖÃ
+                w_matrix(quat_EKF[sensor], mid11, 1, 1); // mode=1, matT=1 Ó¦×ª
                 matrix_mul(q_temp2, 1, 4, mid11, 4, q_temp);
                 Copy(quat_EKF[sensor], q_temp, 4);
                 if (Norm(quat_EKF[sensor], 4) == 0) { return 0; }
@@ -1283,7 +1298,7 @@ uint8_t KalmanFilter(float* acc_mcu, float* gyr_mcu, float* mag_mcu, float dtTim
         }
     }
 
-    // ¿ìËÙ»Ø¹é´¦Àí£¨ÓëÔ­Ê¼´úÂëÏàÍ¬£©
+    // Ù»Ø¹é´¦Ô­Ê¼Í¬
     if (sensorQuitTimeReturnCtrl[sensor]) {
         t_quit[sensor] = t_quit[sensor] + dtTime;
         sensorQuitReturnCtrl[sensor] = 0;
@@ -1361,7 +1376,7 @@ uint8_t KalmanFilter(float* acc_mcu, float* gyr_mcu, float* mag_mcu, float dtTim
         }
     }
 
-    // ËÄÔªÊýÂË²¨ - ÓëMATLAB´úÂëÍêÈ«Ò»ÖÂ
+    // ÔªË² - MATLABÈ«Ò»
     float_temp = quat_EKF[sensor][0] * quat_Filter[sensor][0] + quat_EKF[sensor][1] * quat_Filter[sensor][1] +
         quat_EKF[sensor][2] * quat_Filter[sensor][2] + quat_EKF[sensor][3] * quat_Filter[sensor][3];
     if (float_temp < 0) {
@@ -1398,7 +1413,7 @@ uint8_t KalmanFilter(float* acc_mcu, float* gyr_mcu, float* mag_mcu, float dtTim
     return 1;
 }
 
-// µ÷ÊÔ´òÓ¡º¯Êý
+// Ô´Ó¡
 static void Print(float* mat, char r, char c) {
     printf("=[ ");
     char i, j;
